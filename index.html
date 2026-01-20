@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Tarefas - Aplicativo de Gestão</title>
+    <meta name="description" content="Um aplicativo de lista de tarefas simples, responsivo e eficiente com suporte a reordenação por arrastar e soltar.">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --primary-dark: #357abd;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --border-radius: 12px;
+            --shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        button#add-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        button#add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+        }
+
+        button#add-btn:active {
+            transform: translateY(0);
+        }
+
+        ul {
+            list-style: none;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        ul::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ul::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ul::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        li {
+            background: #ffffff;
+            border: 2px solid #f0f0f0;
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease;
+            cursor: grab;
+        }
+
+        li:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        li:active {
+            cursor: grabbing;
+        }
+
+        .sortable-ghost {
+            opacity: 0.5;
+            background-color: #e8f4fd;
+            border: 2px dashed var(--primary-color);
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0; 
+                transform: translateX(-20px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0);
+            }
+        }
+
+        .drag-handle {
+            color: #bbb;
+            margin-right: 15px;
+            cursor: grab;
+            font-size: 1.5rem;
+            user-select: none;
+            transition: color 0.3s ease;
+        }
+
+        li:hover .drag-handle {
+            color: var(--primary-color);
+        }
+
+        .task-text {
+            font-size: 1.2rem;
+            flex: 1;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+            word-break: break-word;
+        }
+
+        .completed {
+            background: #f8f9fa !important;
+            border-color: #e0e0e0 !important;
+        }
+
+        .completed .task-text {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            border: none;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .btn-complete {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-complete:hover {
+            background-color: #27ae60;
+            transform: scale(1.1);
+        }
+
+        .btn-delete {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #c0392b;
+            transform: scale(1.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            margin-top: 40px;
+            font-size: 1.2rem;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            border: 2px dashed #ddd;
+        }
+
+        .stats {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            text-align: center;
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            input[type="text"], button#add-btn {
+                font-size: 1rem;
+                padding: 12px 15px;
+            }
+            .task-text {
+                font-size: 1.1rem;
+            }
+            .btn-action {
+                padding: 8px 10px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>✓ Minhas Tarefas</h1>
+        
+        <div class="input-group">
+            <input type="text" id="todo-input" placeholder="Digite sua nova tarefa..." aria-label="Nova tarefa">
+            <button id="add-btn">+ Adicionar</button>
+        </div>
+
+        <ul id="todo-list"></ul>
+
+        <div id="empty-msg" class="empty-state">
+            📝 Nenhuma tarefa pendente.<br>
+            <small>Aproveite seu dia!</small>
+        </div>
+
+        <div id="stats" class="stats" style="display: none;">
+            <strong id="total-tasks">0</strong> tarefas no total | 
+            <strong id="completed-tasks">0</strong> concluídas | 
+            <strong id="pending-tasks">0</strong> pendentes
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('todo-input');
+        const addBtn = document.getElementById('add-btn');
+        const todoList = document.getElementById('todo-list');
+        const emptyMsg = document.getElementById('empty-msg');
+        const stats = document.getElementById('stats');
+
+        let tasks = JSON.parse(localStorage.getItem('my_tasks')) || [];
+
+        function updateStats() {
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.completed).length;
+            const pending = total - completed;
+
+            document.getElementById('total-tasks').textContent = total;
+            document.getElementById('completed-tasks').textContent = completed;
+            document.getElementById('pending-tasks').textContent = pending;
+
+            stats.style.display = total > 0 ? 'block' : 'none';
+        }
+
+        function saveTasks() {
+            localStorage.setItem('my_tasks', JSON.stringify(tasks));
+            renderTasks();
+        }
+
+        function addTask() {
+            const text = input.value.trim();
+            if (text !== "") {
+                const newTask = {
+                    id: Date.now(),
+                    text: text,
+                    completed: false
+                };
+                tasks.push(newTask);
+                input.value = "";
+                saveTasks();
+                input.focus();
+            }
+        }
+
+        function deleteTask(id) {
+            if (confirm('Deseja realmente excluir esta tarefa?')) {
+                tasks = tasks.filter(task => task.id !== id);
+                saveTasks();
+            }
+        }
+
+        function toggleTask(id) {
+            tasks = tasks.map(task => {
+                if (task.id === id) {
+                    return { ...task, completed: !task.completed };
+                }
+                return task;
+            });
+            saveTasks();
+        }
+
+        function renderTasks() {
+            todoList.innerHTML = "";
+            
+            if (tasks.length === 0) {
+                emptyMsg.style.display = "block";
+            } else {
+                emptyMsg.style.display = "none";
+                
+                tasks.forEach(task => {
+                    const li = document.createElement('li');
+                    li.className = task.completed ? 'completed' : '';
+                    li.setAttribute('data-id', task.id);
+                    
+                    li.innerHTML = `
+                        <span class="drag-handle">☰</span>
+                        <span class="task-text" onclick="toggleTask(${task.id})">${task.text}</span>
+                        <div class="actions">
+                            <button class="btn-action btn-complete" onclick="toggleTask(${task.id})" title="Marcar como concluída">✓</button>
+                            <button class="btn-action btn-delete" onclick="deleteTask(${task.id})" title="Excluir tarefa">✕</button>
+                        </div>
+                    `;
+                    todoList.appendChild(li);
+                });
+            }
+            
+            updateStats();
+        }
+
+        new Sortable(todoList, {
+            animation: 200,
+            handle: '.drag-handle',
+            ghostClass: 'sortable-ghost',
+            onEnd: function() {
+                const newOrder = Array.from(todoList.children).map(li => parseInt(li.getAttribute('data-id')));
+                const reorderedTasks = [];
+                newOrder.forEach(id => {
+                    const task = tasks.find(t => t.id === id);
+                    if (task) reorderedTasks.push(task);
+                });
+                tasks = reorderedTasks;
+                localStorage.setItem('my_tasks', JSON.stringify(tasks));
+            }
+        });
+
+        addBtn.addEventListener('click', addTask);
+        
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTask();
+            }
+        });
+
+        renderTasks();
+        input.focus();
+    </script>
+</body>
+</html>
