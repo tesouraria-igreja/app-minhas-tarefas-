@@ -1,2 +1,2 @@
 # app-minhas-tarefas-
-Aplicativo de gestão de tarefas com drag and drop
+Aplicativo de gestão de tarefas diárias
