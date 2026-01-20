@@ -1,307 +1,183 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minhas Tarefas - Aplicativo de Gestão</title>
-    <meta name="description" content="Um aplicativo de lista de tarefas simples, responsivo e eficiente com suporte a reordenação por arrastar e soltar.">
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <style>
-        :root {
-            --primary-color: #4a90e2;
-            --bg-color: #f4f7f6;
-            --text-color: #333;
-            --card-bg: #ffffff;
-            --danger-color: #e74c3c;
-            --success-color: #2ecc71;
-            --border-radius: 12px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investimentos - Mordomia Financeira</title>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-            min-height: 100vh;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5rem;
-            color: var(--primary-color);
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: var(--border-radius);
-            font-size: 1.2rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--primary-color);
-        }
-
-        button#add-btn {
-            padding: 15px 25px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 1.2rem;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-
-        button#add-btn:hover {
-            background-color: #357abd;
-        }
-
-        ul {
-            list-style: none;
-        }
-
-        li {
-            background: #fff;
-            border: 1px solid #eee;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: var(--border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: transform 0.2s, box-shadow 0.2s;
-            animation: fadeIn 0.3s ease;
-            cursor: grab;
-        }
-
-        li:active {
-            cursor: grabbing;
-        }
-
-        .sortable-ghost {
-            opacity: 0.4;
-            background-color: #e1ecf4;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        li:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-
-        .drag-handle {
-            color: #ccc;
-            margin-right: 15px;
-            cursor: grab;
-            font-size: 1.5rem;
-            user-select: none;
-        }
-
-        .task-text {
-            font-size: 1.3rem;
-            flex: 1;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-
-        .completed .task-text {
-            text-decoration: line-through;
-            color: #888;
-        }
-
-        .actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-action {
-            border: none;
-            padding: 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: opacity 0.2s;
-        }
-
-        .btn-complete {
-            background-color: var(--success-color);
-            color: white;
-        }
-
-        .btn-delete {
-            background-color: var(--danger-color);
-            color: white;
-        }
-
-        .btn-action:hover {
-            opacity: 0.8;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: #999;
-            margin-top: 20px;
-            font-size: 1.1rem;
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px;
-            }
-            h1 {
-                font-size: 2rem;
-            }
-            input[type="text"], button#add-btn {
-                font-size: 1rem;
-                padding: 12px;
-            }
-            .task-text {
-                font-size: 1.1rem;
-            }
-        }
-    </style>
+<style>
+* { box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 0; padding: 20px; min-height: 100vh; }
+.container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+header { text-align: center; padding: 30px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+header h1 { margin: 0; font-size: 2em; }
+main { padding: 30px; }
+.numeric { text-align: right; }
+.profit-positive { color: #28a745; font-weight: 600; }
+.profit-negative { color: #dc3545; font-weight: 600; }
+.btn { padding: 10px 20px; cursor: pointer; }
+</style>
 </head>
+
 <body>
+<div class="container">
+<header>
+<h1>📊 Planilha de Investimentos</h1>
+<p>Mordomia Financeira para a Glória de Deus</p>
+</header>
 
-    <div class="container">
-        <h1>Minhas Tarefas</h1>
-        
-        <div class="input-group">
-            <input type="text" id="todo-input" placeholder="O que precisa ser feito?" aria-label="Nova tarefa">
-            <button id="add-btn">Adicionar</button>
-        </div>
+<main>
 
-        <ul id="todo-list">
-        </ul>
+<form onsubmit="addInvestment(event)">
+<input id="ativo" placeholder="Ativo" required>
+<input id="quantidade" type="number" step="0.00000001" placeholder="Quantidade" required>
+<input id="precoCompra" type="number" step="0.00000001" placeholder="Preço Compra" required>
+<input id="precoAtual" type="number" step="0.00000001" placeholder="Preço Atual" required>
+<input id="dataCompra" type="date" required>
+<button class="btn">Adicionar</button>
+</form>
 
-        <div id="empty-msg" class="empty-state">Nenhuma tarefa pendente. Aproveite seu dia!</div>
-    </div>
+<table border="1" width="100%" style="margin-top:20px">
+<thead>
+<tr>
+<th>Ativo</th>
+<th class="numeric">Qtd</th>
+<th class="numeric">Compra</th>
+<th class="numeric">Atual</th>
+<th class="numeric">Total</th>
+<th class="numeric">Lucro</th>
+<th class="numeric">%</th>
+<th>Data</th>
+<th>Ação</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
 
-    <script>
-        const input = document.getElementById('todo-input');
-        const addBtn = document.getElementById('add-btn');
-        const todoList = document.getElementById('todo-list');
-        const emptyMsg = document.getElementById('empty-msg');
+<h3>Total Investido: <span id="totalInvestido">R$ 0,00</span></h3>
+<h3>Valor Atual: <span id="valorAtual">R$ 0,00</span></h3>
+<h3>Lucro/Prejuízo: <span id="totalLucro">R$ 0,00</span></h3>
 
-        let tasks = JSON.parse(localStorage.getItem('my_tasks')) || [];
+</main>
+</div>
 
-        function saveTasks() {
-            localStorage.setItem('my_tasks', JSON.stringify(tasks));
-            renderTasks();
-        }
+<script>
+function formatCurrency(v) {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 8 }).format(v);
+}
+function formatNumber(v) {
+  return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 8 }).format(v);
+}
+function formatPercent(v) {
+  return v.toFixed(2).replace('.', ',') + '%';
+}
+function parseValue(text) {
+  if (!text) return 0;
+  let cleanText = text.toString().trim().replace(/R\$/g, '').replace(/\s/g, '');
+  cleanText = cleanText.replace(/\./g, '').replace(',', '.');
+  return parseFloat(cleanText) || 0;
+}
+function createRow(data) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td contenteditable>${data.ativo || ''}</td>
+    <td contenteditable class="numeric" data-value="${data.qtd || 0}">${formatNumber(data.qtd || 0)}</td>
+    <td contenteditable class="numeric" data-value="${data.buy || 0}">${formatNumber(data.buy || 0)}</td>
+    <td contenteditable class="numeric" data-value="${data.cur || 0}">${formatNumber(data.cur || 0)}</td>
+    <td class="numeric"></td>
+    <td class="numeric"></td>
+    <td class="numeric"></td>
+    <td contenteditable>${data.data || ''}</td>
+    <td><button onclick="this.closest('tr').remove(); calculateTotals(); saveToStorage();">❌</button></td>
+  `;
+  tr.querySelectorAll('[contenteditable].numeric').forEach(td => {
+    td.addEventListener('blur', () => {
+      const v = parseValue(td.innerText);
+      td.dataset.value = v;
+      td.innerText = formatNumber(v);
+      calculateRow(tr);
+      calculateTotals();
+      saveToStorage();
+    });
+    td.addEventListener('focus', () => {
+      td.innerText = td.dataset.value.toString().replace('.', ',');
+    });
+  });
+  tr.querySelector('td[contenteditable]:not(.numeric)').addEventListener('blur', () => {
+    saveToStorage();
+  });
+  document.getElementById('tableBody').appendChild(tr);
+  calculateRow(tr);
+  return tr;
+}
+function calculateRow(tr) {
+  const q = parseFloat(tr.cells[1].dataset.value || 0);
+  const b = parseFloat(tr.cells[2].dataset.value || 0);
+  const c = parseFloat(tr.cells[3].dataset.value || 0);
+  const invest = q * b;
+  const atual = q * c;
+  const lucro = atual - invest;
+  const perc = invest > 0 ? (lucro / invest) * 100 : 0;
+  tr.cells[4].innerText = formatCurrency(atual);
+  tr.cells[5].innerText = formatCurrency(lucro);
+  tr.cells[5].className = 'numeric ' + (lucro >= 0 ? 'profit-positive' : 'profit-negative');
+  tr.cells[6].innerText = formatPercent(perc);
+  tr.cells[6].className = 'numeric ' + (lucro >= 0 ? 'profit-positive' : 'profit-negative');
+}
+function calculateTotals() {
+  let ti = 0, va = 0;
+  document.querySelectorAll('#tableBody tr').forEach(tr => {
+    const q = +tr.cells[1].dataset.value || 0;
+    const b = +tr.cells[2].dataset.value || 0;
+    const c = +tr.cells[3].dataset.value || 0;
+    ti += q * b;
+    va += q * c;
+  });
+  const lucroTotal = va - ti;
+  document.getElementById('totalInvestido').innerText = formatCurrency(ti);
+  document.getElementById('valorAtual').innerText = formatCurrency(va);
+  document.getElementById('totalLucro').innerText = formatCurrency(lucroTotal);
+  document.getElementById('totalLucro').className = lucroTotal >= 0 ? 'profit-positive' : 'profit-negative';
+}
+function addInvestment(e) {
+  e.preventDefault();
+  createRow({
+    ativo: ativo.value,
+    qtd: +quantidade.value,
+    buy: +precoCompra.value,
+    cur: +precoAtual.value,
+    data: dataCompra.value
+  });
+  e.target.reset();
+  calculateTotals();
+  saveToStorage();
+}
+function saveToStorage() {
+  const data = [];
+  document.querySelectorAll('#tableBody tr').forEach(tr => {
+    data.push({
+      ativo: tr.cells[0].innerText,
+      qtd: tr.cells[1].dataset.value,
+      buy: tr.cells[2].dataset.value,
+      cur: tr.cells[3].dataset.value,
+      data: tr.cells[7].innerText
+    });
+  });
+  localStorage.setItem('investments', JSON.stringify(data));
+}
+function loadFromStorage() {
+  const saved = localStorage.getItem('investments');
+  if (saved) {
+    const data = JSON.parse(saved);
+    data.forEach(item => createRow(item));
+    calculateTotals();
+  }
+}
 
-        function addTask() {
-            const text = input.value.trim();
-            if (text !== "") {
-                const newTask = {
-                    id: Date.now(),
-                    text: text,
-                    completed: false
-                };
-                tasks.push(newTask);
-                input.value = "";
-                saveTasks();
-            }
-        }
+// Carregar dados ao iniciar
+loadFromStorage();
+</script>
 
-        function deleteTask(id) {
-            tasks = tasks.filter(task => task.id !== id);
-            saveTasks();
-        }
-
-        function toggleTask(id) {
-            tasks = tasks.map(task => {
-                if (task.id === id) {
-                    return { ...task, completed: !task.completed };
-                }
-                return task;
-            });
-            saveTasks();
-        }
-
-        function renderTasks() {
-            todoList.innerHTML = "";
-            
-            if (tasks.length === 0) {
-                emptyMsg.style.display = "block";
-            } else {
-                emptyMsg.style.display = "none";
-                
-                tasks.forEach(task => {
-                    const li = document.createElement('li');
-                    li.className = task.completed ? 'completed' : '';
-                    li.setAttribute('data-id', task.id);
-                    
-                    li.innerHTML = `
-                        <span class="drag-handle">☰</span>
-                        <span class="task-text" onclick="toggleTask(${task.id})">${task.text}</span>
-                        <div class="actions">
-                            <button class="btn-action btn-complete" onclick="toggleTask(${task.id})" title="Concluir">✓</button>
-                            <button class="btn-action btn-delete" onclick="deleteTask(${task.id})" title="Excluir">✕</button>
-                        </div>
-                    `;
-                    todoList.appendChild(li);
-                });
-            }
-        }
-
-        new Sortable(todoList, {
-            animation: 150,
-            handle: '.drag-handle',
-            ghostClass: 'sortable-ghost',
-            onEnd: function() {
-                const newOrder = Array.from(todoList.children).map(li => parseInt(li.getAttribute('data-id')));
-                const reorderedTasks = [];
-                newOrder.forEach(id => {
-                    const task = tasks.find(t => t.id === id);
-                    if (task) reorderedTasks.push(task);
-                });
-                tasks = reorderedTasks;
-                localStorage.setItem('my_tasks', JSON.stringify(tasks));
-            }
-        });
-
-        addBtn.addEventListener('click', addTask);
-        
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                addTask();
-            }
-        });
-
-        renderTasks();
-    </script>
 </body>
 </html>
