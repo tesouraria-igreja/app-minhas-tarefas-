@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Tarefas - Aplicativo de Gestão</title>
+    <meta name="description" content="Um aplicativo de lista de tarefas simples, responsivo e eficiente com suporte a reordenação por arrastar e soltar.">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1.2rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary-color);
+        }
+
+        button#add-btn {
+            padding: 15px 25px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button#add-btn:hover {
+            background-color: #357abd;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            background: #fff;
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: fadeIn 0.3s ease;
+            cursor: grab;
+        }
+
+        li:active {
+            cursor: grabbing;
+        }
+
+        .sortable-ghost {
+            opacity: 0.4;
+            background-color: #e1ecf4;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        li:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .drag-handle {
+            color: #ccc;
+            margin-right: 15px;
+            cursor: grab;
+            font-size: 1.5rem;
+            user-select: none;
+        }
+
+        .task-text {
+            font-size: 1.3rem;
+            flex: 1;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .completed .task-text {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: opacity 0.2s;
+        }
+
+        .btn-complete {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-action:hover {
+            opacity: 0.8;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            input[type="text"], button#add-btn {
+                font-size: 1rem;
+                padding: 12px;
+            }
+            .task-text {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Minhas Tarefas</h1>
+        
+        <div class="input-group">
+            <input type="text" id="todo-input" placeholder="O que precisa ser feito?" aria-label="Nova tarefa">
+            <button id="add-btn">Adicionar</button>
+        </div>
+
+        <ul id="todo-list">
+        </ul>
+
+        <div id="empty-msg" class="empty-state">Nenhuma tarefa pendente. Aproveite seu dia!</div>
+    </div>
+
+    <script>
+        const input = document.getElementById('todo-input');
+        const addBtn = document.getElementById('add-btn');
+        const todoList = document.getElementById('todo-list');
+        const emptyMsg = document.getElementById('empty-msg');
+
+        let tasks = JSON.parse(localStorage.getItem('my_tasks')) || [];
+
+        function saveTasks() {
+            localStorage.setItem('my_tasks', JSON.stringify(tasks));
+            renderTasks();
+        }
+
+        function addTask() {
+            const text = input.value.trim();
+            if (text !== "") {
+                const newTask = {
+                    id: Date.now(),
+                    text: text,
+                    completed: false
+                };
+                tasks.push(newTask);
+                input.value = "";
+                saveTasks();
+            }
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(task => task.id !== id);
+            saveTasks();
+        }
+
+        function toggleTask(id) {
+            tasks = tasks.map(task => {
+                if (task.id === id) {
+                    return { ...task, completed: !task.completed };
+                }
+                return task;
+            });
+            saveTasks();
+        }
+
+        function renderTasks() {
+            todoList.innerHTML = "";
+            
+            if (tasks.length === 0) {
+                emptyMsg.style.display = "block";
+            } else {
+                emptyMsg.style.display = "none";
+                
+                tasks.forEach(task => {
+                    const li = document.createElement('li');
+                    li.className = task.completed ? 'completed' : '';
+                    li.setAttribute('data-id', task.id);
+                    
+                    li.innerHTML = `
+                        <span class="drag-handle">☰</span>
+                        <span class="task-text" onclick="toggleTask(${task.id})">${task.text}</span>
+                        <div class="actions">
+                            <button class="btn-action btn-complete" onclick="toggleTask(${task.id})" title="Concluir">✓</button>
+                            <button class="btn-action btn-delete" onclick="deleteTask(${task.id})" title="Excluir">✕</button>
+                        </div>
+                    `;
+                    todoList.appendChild(li);
+                });
+            }
+        }
+
+        new Sortable(todoList, {
+            animation: 150,
+            handle: '.drag-handle',
+            ghostClass: 'sortable-ghost',
+            onEnd: function() {
+                const newOrder = Array.from(todoList.children).map(li => parseInt(li.getAttribute('data-id')));
+                const reorderedTasks = [];
+                newOrder.forEach(id => {
+                    const task = tasks.find(t => t.id === id);
+                    if (task) reorderedTasks.push(task);
+                });
+                tasks = reorderedTasks;
+                localStorage.setItem('my_tasks', JSON.stringify(tasks));
+            }
+        });
+
+        addBtn.addEventListener('click', addTask);
+        
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTask();
+            }
+        });
+
+        renderTasks();
+    </script>
+</body>
+</html>
